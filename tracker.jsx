@@ -148,10 +148,11 @@ const ChangeBadge = ({ current, previous }) => {
 // ─── METRIC SLIDER ──────────────────────────────────────────
 const MetricSlider = ({ label, value, onChange, color }) => (
   <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-    <span style={{ fontSize: 13, color: "#aaa", width: 140, flexShrink: 0 }}>{label}</span>
+    <span className="metric-label" style={{ fontSize: 13, color: "#aaa", width: 140, flexShrink: 0 }}>{label}</span>
     <div style={{ flex: 1, display: "flex", gap: 6 }}>
       {[1, 2, 3, 4, 5].map((n) => (
         <button
+          className="metric-btn"
           key={n}
           onClick={() => onChange(n)}
           style={{
@@ -339,10 +340,117 @@ export default function SpeakersGymTracker() {
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        /* ─── MOBILE RESPONSIVE ─────────────────────────── */
+        @media (max-width: 768px) {
+          .app-header {
+            flex-wrap: wrap !important;
+            padding: 12px 16px !important;
+            gap: 12px !important;
+          }
+          .header-right {
+            flex: 1 1 100% !important;
+            justify-content: flex-start !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+          }
+          .student-bar {
+            flex-wrap: wrap !important;
+            padding: 12px 16px !important;
+            gap: 10px !important;
+          }
+          .student-bar .student-field {
+            flex: 1 1 calc(50% - 5px) !important;
+          }
+          .student-bar .student-field input {
+            width: 100% !important;
+          }
+          .student-journey {
+            margin-left: 0 !important;
+            flex: 1 1 100% !important;
+            text-align: center !important;
+          }
+          .main-content {
+            padding: 16px !important;
+          }
+          .score-summary-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+          }
+          .metric-cards-grid {
+            grid-template-columns: 1fr !important;
+            gap: 14px !important;
+          }
+          .mental-notes-grid {
+            grid-template-columns: 1fr !important;
+            gap: 14px !important;
+          }
+          .notes-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+          .baseline-box {
+            flex-direction: column !important;
+            gap: 20px !important;
+            padding: 20px 16px !important;
+          }
+          .chart-grid {
+            grid-template-columns: 1fr !important;
+            gap: 14px !important;
+          }
+          .notes-summary-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+          .week-tabs button {
+            padding: 8px 14px !important;
+            font-size: 12px !important;
+          }
+          .card-padding {
+            padding: 16px !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .app-header {
+            padding: 10px 12px !important;
+          }
+          .header-logo {
+            height: 36px !important;
+          }
+          .header-title {
+            font-size: 14px !important;
+          }
+          .header-subtitle {
+            font-size: 9px !important;
+          }
+          .student-bar .student-field {
+            flex: 1 1 100% !important;
+          }
+          .main-content {
+            padding: 10px !important;
+          }
+          .score-summary-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+          }
+          .score-summary-grid .score-ring-card {
+            padding: 16px !important;
+          }
+          .metric-label {
+            width: 100px !important;
+            font-size: 11px !important;
+          }
+          .metric-btn {
+            width: 30px !important;
+            height: 30px !important;
+            font-size: 12px !important;
+          }
+        }
       `}</style>
 
       {/* ─── HEADER ─────────────────────────────────────── */}
-      <header style={{
+      <header className="app-header" style={{
         padding: "20px 32px",
         display: "flex",
         alignItems: "center",
@@ -357,6 +465,7 @@ export default function SpeakersGymTracker() {
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           {/* Logo - embedded */}
           <img
+            className="header-logo"
             src={LOGO_SRC}
             alt="The Speaker's Gym"
             style={{
@@ -367,16 +476,16 @@ export default function SpeakersGymTracker() {
             }}
           />
           <div>
-            <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: -0.3 }}>
+            <div className="header-title" style={{ fontSize: 16, fontWeight: 800, letterSpacing: -0.3 }}>
               {BRAND.name}
             </div>
-            <div style={{ fontSize: 11, color: textSecondary, letterSpacing: 2, textTransform: "uppercase" }}>
+            <div className="header-subtitle" style={{ fontSize: 11, color: textSecondary, letterSpacing: 2, textTransform: "uppercase" }}>
               Performance Tracker
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div className="header-right" style={{ display: "flex", alignItems: "center", gap: 12 }}>
           {/* View Toggle */}
           <div style={{
             display: "flex", background: inputBg, borderRadius: 10,
@@ -472,13 +581,13 @@ export default function SpeakersGymTracker() {
       </header>
 
       {/* ─── STUDENT INFO BAR ──────────────────────────── */}
-      <div style={{
+      <div className="student-bar" style={{
         padding: "16px 32px",
         display: "flex", gap: 16, alignItems: "center",
         borderBottom: `1px solid ${cardBorder}`,
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <label style={{ fontSize: 12, color: textSecondary, letterSpacing: 1, textTransform: "uppercase" }}>Student</label>
+        <div className="student-field" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <label style={{ fontSize: 12, color: textSecondary, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>Student</label>
           <input
             value={studentName}
             onChange={(e) => setStudentName(e.target.value)}
@@ -490,8 +599,8 @@ export default function SpeakersGymTracker() {
             }}
           />
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <label style={{ fontSize: 12, color: textSecondary, letterSpacing: 1, textTransform: "uppercase" }}>Cohort Start</label>
+        <div className="student-field" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <label style={{ fontSize: 12, color: textSecondary, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>Cohort Start</label>
           <input
             type="date"
             value={cohortDate}
@@ -504,7 +613,7 @@ export default function SpeakersGymTracker() {
           />
         </div>
         {studentName && (
-          <div style={{
+          <div className="student-journey" style={{
             marginLeft: "auto",
             fontSize: 14,
             color: BRAND.accent,
@@ -516,9 +625,9 @@ export default function SpeakersGymTracker() {
         )}
       </div>
 
-      <div key={resetKey} style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 32px" }}>
+      <div key={resetKey} className="main-content" style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 32px" }}>
         {/* ─── WEEK TABS ───────────────────────────────── */}
-        <div style={{
+        <div className="week-tabs" style={{
           display: "flex", gap: 8, marginBottom: 28,
           overflowX: "auto", paddingBottom: 4,
         }}>
@@ -558,12 +667,12 @@ export default function SpeakersGymTracker() {
         {view === "input" && (
           <div className="fade-in">
             {/* Score Summary Row */}
-            <div style={{
+            <div className="score-summary-grid" style={{
               display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
               gap: 16, marginBottom: 28,
             }}>
               {Object.entries(CATEGORIES).map(([key, cat]) => (
-                <div key={key} style={{
+                <div key={key} className="score-ring-card card-padding" style={{
                   background: cardBg, border: `1px solid ${cardBorder}`,
                   borderRadius: 16, padding: 24, textAlign: "center",
                 }}>
@@ -608,7 +717,7 @@ export default function SpeakersGymTracker() {
             </div>
 
             {/* Metric Input Cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20, marginBottom: 28 }}>
+            <div className="metric-cards-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20, marginBottom: 28 }}>
               {Object.entries(CATEGORIES).map(([key, cat]) => (
                 <div key={key} style={{
                   background: cardBg, border: `1px solid ${cardBorder}`,
@@ -635,7 +744,7 @@ export default function SpeakersGymTracker() {
             </div>
 
             {/* Anxiety & Confidence + Notes */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 20 }}>
+            <div className="mental-notes-grid" style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 20 }}>
               <div style={{
                 background: cardBg, border: `1px solid ${cardBorder}`,
                 borderRadius: 16, padding: 24,
@@ -691,7 +800,7 @@ export default function SpeakersGymTracker() {
                 <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: textPrimary }}>
                   📝 Weekly Review — Week {activeWeek + 1}
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                <div className="notes-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
                   {[
                     { key: "well", label: "What I Did Well", emoji: "✅", color: "#4ECDC4" },
                     { key: "improve", label: "What to Improve", emoji: "🔧", color: "#FF6B6B" },
@@ -746,11 +855,12 @@ export default function SpeakersGymTracker() {
               <>
                 {/* Baseline vs Current Box */}
                 {baselineScore !== null && currentScore !== null && baselineIdx !== currentIdx && (
-                  <div style={{
+                  <div className="baseline-box" style={{
                     background: `linear-gradient(135deg, ${BRAND.accent}10, transparent)`,
                     border: `1px solid ${BRAND.accent}33`,
                     borderRadius: 20, padding: 32, marginBottom: 28,
                     display: "flex", alignItems: "center", justifyContent: "center", gap: 48,
+                    flexWrap: "wrap",
                   }}>
                     <div style={{ textAlign: "center" }}>
                       <div style={{ fontSize: 11, color: textSecondary, letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>
@@ -801,7 +911,7 @@ export default function SpeakersGymTracker() {
                 )}
 
                 {/* Chart Grid */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 28 }}>
+                <div className="chart-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 28 }}>
                   {/* Overall Score Chart */}
                   <div style={{
                     background: cardBg, border: `1px solid ${cardBorder}`,
@@ -965,7 +1075,7 @@ export default function SpeakersGymTracker() {
                   <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16 }}>
                     📝 Coaching Notes Summary
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+                  <div className="notes-summary-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
                     {weeks.map((w, i) => {
                       if (!w.vocal.some(v => v > 0)) return null;
                       const hasNotes = w.notes.well || w.notes.improve || w.notes.focus;
