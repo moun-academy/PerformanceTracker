@@ -13,22 +13,44 @@ const LOGO_SRC = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1B
 
 const CATEGORIES = {
   vocal: {
-    label: "Vocal Variety",
+    label: "Vocal Review",
     icon: "🎙️",
     color: "#E8A838",
     metrics: ["Volume", "Pitch", "Pace", "Tone", "Pauses"],
+    questions: [
+      "How does my voice make me feel when I listen to it back?",
+      "What happens to my pitch at the end of my sentences?",
+      "Does my vocal delivery match the message I'm trying to get across?",
+      "When do I sound most believable and most disconnected?",
+      "Do I pause strategically, or do I fill every moment of silence with noise?",
+    ],
   },
   body: {
-    label: "Body Language",
+    label: "Visual Review",
     icon: "🧍",
     color: "#4ECDC4",
     metrics: ["Eye Contact", "Hand Gestures", "Posture", "Facial Expression", "Stillness & Control"],
+    questions: [
+      "Where do I look when I'm thinking about what to say next?",
+      "What are my default hand gestures?",
+      "Do I look confident or apologetic with my body language?",
+      "Do I use my face to express emotions?",
+      "What are my visual tics that are distracting?",
+    ],
   },
   structure: {
-    label: "Structure",
-    icon: "📐",
+    label: "Verbal Review",
+    icon: "💬",
     color: "#FF6B6B",
-    metrics: ["Opening", "Flow", "Clarity", "Story / Example", "Close"],
+    metrics: ["Clarity", "Word Choice", "Filler Words", "Repetition", "Structure", "Logical Flow"],
+    questions: [
+      "Does each paragraph make one clear point?",
+      "Do I use short, clear words or long complicated ones?",
+      "What are my non-words and filler words?",
+      "Are there any words I repeat too often?",
+      "How clear is the structure?",
+      "Can someone follow along logically and easily?",
+    ],
   },
 };
 
@@ -37,7 +59,7 @@ const WEEKS = [1, 2, 3, 4, 5, 6];
 const emptyWeek = () => ({
   vocal: [0, 0, 0, 0, 0],
   body: [0, 0, 0, 0, 0],
-  structure: [0, 0, 0, 0, 0],
+  structure: [0, 0, 0, 0, 0, 0],
   anxiety: 5,
   confidence: 5,
   notes: { well: "", improve: "", focus: "" },
@@ -45,7 +67,8 @@ const emptyWeek = () => ({
 
 const calcScore = (arr) => {
   const total = arr.reduce((s, v) => s + v, 0);
-  return Math.round((total / 25) * 100);
+  const maxScore = arr.length * 5;
+  return Math.round((total / maxScore) * 100);
 };
 
 const calcOverall = (week) => {
@@ -146,29 +169,39 @@ const ChangeBadge = ({ current, previous }) => {
 };
 
 // ─── METRIC SLIDER ──────────────────────────────────────────
-const MetricSlider = ({ label, value, onChange, color }) => (
-  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-    <span className="metric-label" style={{ fontSize: 13, color: "#aaa", width: 140, flexShrink: 0 }}>{label}</span>
-    <div style={{ flex: 1, display: "flex", gap: 6 }}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <button
-          className="metric-btn"
-          key={n}
-          onClick={() => onChange(n)}
-          style={{
-            width: 36, height: 36, borderRadius: 8,
-            border: value === n ? `2px solid ${color}` : "1px solid rgba(255,255,255,0.1)",
-            background: value === n ? `${color}22` : "rgba(255,255,255,0.03)",
-            color: value === n ? color : "#666",
-            fontWeight: 700, fontSize: 14, cursor: "pointer",
-            transition: "all 0.2s",
-          }}
-        >
-          {n}
-        </button>
-      ))}
+const MetricSlider = ({ label, value, onChange, color, question }) => (
+  <div style={{ marginBottom: 12 }}>
+    {question && (
+      <div style={{
+        fontSize: 11, color: "rgba(232,168,56,0.55)", fontStyle: "italic",
+        marginBottom: 3, lineHeight: 1.3, paddingLeft: 2,
+      }}>
+        {question}
+      </div>
+    )}
+    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      <span className="metric-label" style={{ fontSize: 13, color: "#aaa", width: 140, flexShrink: 0 }}>{label}</span>
+      <div style={{ flex: 1, display: "flex", gap: 6 }}>
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            className="metric-btn"
+            key={n}
+            onClick={() => onChange(n)}
+            style={{
+              width: 36, height: 36, borderRadius: 8,
+              border: value === n ? `2px solid ${color}` : "1px solid rgba(255,255,255,0.1)",
+              background: value === n ? `${color}22` : "rgba(255,255,255,0.03)",
+              color: value === n ? color : "#666",
+              fontWeight: 700, fontSize: 14, cursor: "pointer",
+              transition: "all 0.2s",
+            }}
+          >
+            {n}
+          </button>
+        ))}
+      </div>
+      <span style={{ fontSize: 14, fontWeight: 700, color, width: 24, textAlign: "right" }}>{value}</span>
     </div>
-    <span style={{ fontSize: 14, fontWeight: 700, color, width: 24, textAlign: "right" }}>{value}</span>
   </div>
 );
 
@@ -254,9 +287,9 @@ export default function SpeakersGymTracker() {
       if (!hasData) return null;
       return {
         name: `Week ${i + 1}`,
-        "Vocal Variety": vs,
-        "Body Language": bs,
-        Structure: ss,
+        "Vocal Review": vs,
+        "Visual Review": bs,
+        "Verbal Review": ss,
         Overall: Math.round((vs + bs + ss) / 3),
         Anxiety: w.anxiety,
         Confidence: w.confidence,
@@ -277,7 +310,7 @@ export default function SpeakersGymTracker() {
 
   // Export CSV
   const exportCSV = () => {
-    let csv = "Week,Vocal Variety,Body Language,Structure,Overall,Anxiety,Confidence\n";
+    let csv = "Week,Vocal Review,Visual Review,Verbal Review,Overall,Anxiety,Confidence\n";
     weeks.forEach((w, i) => {
       const vs = calcScore(w.vocal);
       const bs = calcScore(w.body);
@@ -737,6 +770,7 @@ export default function SpeakersGymTracker() {
                       value={currentWeek[key][idx]}
                       onChange={(v) => updateMetric(key, idx, v)}
                       color={cat.color}
+                      question={cat.questions?.[idx]}
                     />
                   ))}
                 </div>
@@ -943,7 +977,7 @@ export default function SpeakersGymTracker() {
                     borderRadius: 16, padding: 24,
                   }}>
                     <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: CATEGORIES.vocal.color }}>
-                      🎙️ Vocal Variety Trend
+                      🎙️ Vocal Review Trend
                     </div>
                     <ResponsiveContainer width="100%" height={200}>
                       <LineChart data={chartData}>
@@ -951,7 +985,7 @@ export default function SpeakersGymTracker() {
                         <XAxis dataKey="name" tick={{ fill: textSecondary, fontSize: 11 }} />
                         <YAxis domain={[0, 100]} tick={{ fill: textSecondary, fontSize: 11 }} />
                         <Tooltip content={<CustomTooltip />} />
-                        <Line type="monotone" dataKey="Vocal Variety" stroke={CATEGORIES.vocal.color} strokeWidth={2.5} dot={{ fill: CATEGORIES.vocal.color, r: 4 }} />
+                        <Line type="monotone" dataKey="Vocal Review" stroke={CATEGORIES.vocal.color} strokeWidth={2.5} dot={{ fill: CATEGORIES.vocal.color, r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -962,7 +996,7 @@ export default function SpeakersGymTracker() {
                     borderRadius: 16, padding: 24,
                   }}>
                     <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: CATEGORIES.body.color }}>
-                      🧍 Body Language Trend
+                      🧍 Visual Review Trend
                     </div>
                     <ResponsiveContainer width="100%" height={200}>
                       <LineChart data={chartData}>
@@ -970,7 +1004,7 @@ export default function SpeakersGymTracker() {
                         <XAxis dataKey="name" tick={{ fill: textSecondary, fontSize: 11 }} />
                         <YAxis domain={[0, 100]} tick={{ fill: textSecondary, fontSize: 11 }} />
                         <Tooltip content={<CustomTooltip />} />
-                        <Line type="monotone" dataKey="Body Language" stroke={CATEGORIES.body.color} strokeWidth={2.5} dot={{ fill: CATEGORIES.body.color, r: 4 }} />
+                        <Line type="monotone" dataKey="Visual Review" stroke={CATEGORIES.body.color} strokeWidth={2.5} dot={{ fill: CATEGORIES.body.color, r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -981,7 +1015,7 @@ export default function SpeakersGymTracker() {
                     borderRadius: 16, padding: 24,
                   }}>
                     <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: CATEGORIES.structure.color }}>
-                      📐 Structure Trend
+                      💬 Verbal Review Trend
                     </div>
                     <ResponsiveContainer width="100%" height={200}>
                       <LineChart data={chartData}>
@@ -989,7 +1023,7 @@ export default function SpeakersGymTracker() {
                         <XAxis dataKey="name" tick={{ fill: textSecondary, fontSize: 11 }} />
                         <YAxis domain={[0, 100]} tick={{ fill: textSecondary, fontSize: 11 }} />
                         <Tooltip content={<CustomTooltip />} />
-                        <Line type="monotone" dataKey="Structure" stroke={CATEGORIES.structure.color} strokeWidth={2.5} dot={{ fill: CATEGORIES.structure.color, r: 4 }} />
+                        <Line type="monotone" dataKey="Verbal Review" stroke={CATEGORIES.structure.color} strokeWidth={2.5} dot={{ fill: CATEGORIES.structure.color, r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
@@ -1027,7 +1061,7 @@ export default function SpeakersGymTracker() {
                       <table style={{ width: "100%", borderCollapse: "collapse" }}>
                         <thead>
                           <tr>
-                            {["Week", "Vocal", "Body", "Structure", "Overall", "Anx", "Conf", "Change"].map((h) => (
+                            {["Week", "Vocal", "Visual", "Verbal", "Overall", "Anx", "Conf", "Change"].map((h) => (
                               <th key={h} style={{
                                 padding: "10px 12px", textAlign: "center",
                                 fontSize: 11, color: textSecondary, fontWeight: 600,
