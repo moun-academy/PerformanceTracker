@@ -469,8 +469,8 @@ export default function SpeakersGymTracker() {
             src={LOGO_SRC}
             alt="Performance Tracker"
             style={{
-              height: 48,
-              width: "auto",
+              height: 40,
+              width: 40,
               objectFit: "contain",
               borderRadius: 6,
             }}
