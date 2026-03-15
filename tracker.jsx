@@ -169,18 +169,60 @@ const ChangeBadge = ({ current, previous }) => {
 };
 
 // ─── METRIC SLIDER ──────────────────────────────────────────
-const MetricSlider = ({ label, value, onChange, color, question }) => (
-  <div style={{ marginBottom: 12 }}>
-    {question && (
-      <div style={{
-        fontSize: 11, color: "rgba(232,168,56,0.55)", fontStyle: "italic",
-        marginBottom: 3, lineHeight: 1.3, paddingLeft: 2,
-      }}>
-        {question}
-      </div>
-    )}
-    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-      <span className="metric-label" style={{ fontSize: 13, color: "#aaa", width: 140, flexShrink: 0 }}>{label}</span>
+const MetricSlider = ({ label, value, onChange, color, question }) => {
+  const [showTip, setShowTip] = useState(false);
+  const [flipBelow, setFlipBelow] = useState(false);
+  const labelRef = useRef(null);
+
+  const handleEnter = () => {
+    if (!question) return;
+    if (labelRef.current) {
+      const rect = labelRef.current.getBoundingClientRect();
+      setFlipBelow(rect.top < 80);
+    }
+    setShowTip(true);
+  };
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+      <span
+        ref={labelRef}
+        className="metric-label"
+        onMouseEnter={handleEnter}
+        onMouseLeave={() => setShowTip(false)}
+        style={{
+          fontSize: 13, color: "#aaa", width: 140, flexShrink: 0,
+          position: "relative", cursor: question ? "help" : "default",
+          borderBottom: question ? "1px dashed #d9c06f" : "none",
+          paddingBottom: question ? 1 : 0,
+        }}
+      >
+        {label}
+        {question && showTip && (
+          <span className="metric-tooltip" style={{
+            position: "absolute",
+            left: 0,
+            [flipBelow ? "top" : "bottom"]: "calc(100% + 8px)",
+            background: "#1e1a0e",
+            border: "1px solid #d9c06f",
+            color: "#d9c06f",
+            fontStyle: "italic",
+            fontSize: 12,
+            fontWeight: 400,
+            borderRadius: 6,
+            padding: "8px 12px",
+            maxWidth: 260,
+            width: "max-content",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.6)",
+            zIndex: 50,
+            lineHeight: 1.4,
+            pointerEvents: "none",
+            animation: "tooltipFadeIn 0.2s ease",
+          }}>
+            {question}
+          </span>
+        )}
+      </span>
       <div style={{ flex: 1, display: "flex", gap: 6 }}>
         {[1, 2, 3, 4, 5].map((n) => (
           <button
@@ -200,10 +242,9 @@ const MetricSlider = ({ label, value, onChange, color, question }) => (
           </button>
         ))}
       </div>
-      <span style={{ fontSize: 14, fontWeight: 700, color, width: 24, textAlign: "right" }}>{value}</span>
     </div>
-  </div>
-);
+  );
+};
 
 // ─── RANGE SLIDER ───────────────────────────────────────────
 const RangeSlider = ({ label, value, onChange, min = 1, max = 10, lowLabel, highLabel, color }) => (
@@ -371,6 +412,7 @@ export default function SpeakersGymTracker() {
         ::selection { background: ${BRAND.accent}44; }
         textarea:focus, input:focus { outline: 1px solid ${BRAND.accent}66; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes tooltipFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
