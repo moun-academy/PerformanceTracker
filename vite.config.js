@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['logo.png'],
       manifest: {
-        name: "Speaker's Gym — Performance Tracker",
-        short_name: "Speaker's Gym",
+        name: "Performance Tracker",
+        short_name: "Performance Tracker",
         description: 'Track and improve your public speaking performance across 6 weeks of coaching.',
         theme_color: '#1a1a2e',
         background_color: '#1a1a2e',
