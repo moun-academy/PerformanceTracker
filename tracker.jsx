@@ -193,11 +193,10 @@ const MetricSlider = ({ label, value, onChange, color, question }) => {
         style={{
           fontSize: 13, color: "#aaa", width: 140, flexShrink: 0,
           position: "relative", cursor: question ? "help" : "default",
-          borderBottom: question ? "1px dashed #d9c06f" : "none",
-          paddingBottom: question ? 1 : 0,
         }}
       >
         {label}
+        {question && <span style={{ color: "#d9c06f", fontSize: 10, opacity: 0.6, marginLeft: 6 }}>?</span>}
         {question && showTip && (
           <span className="metric-tooltip" style={{
             position: "absolute",
