@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 // ─── CONFIGURATION ───────────────────────────────────────────
 const BRAND = {
-  name: "Speaker's Gym",
+  name: "Performance Tracker",
   accent: "#E8A838",
   accentLight: "#F5C96A",
   accentDim: "rgba(232,168,56,0.15)",
@@ -467,7 +467,7 @@ export default function SpeakersGymTracker() {
           <img
             className="header-logo"
             src={LOGO_SRC}
-            alt="The Speaker's Gym"
+            alt="Performance Tracker"
             style={{
               height: 48,
               width: "auto",
