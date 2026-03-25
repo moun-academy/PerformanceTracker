@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Coaches collection - only the coach can read/write their own doc
+    match /coaches/{coachId} {
+      allow read: if request.auth != null && request.auth.uid == coachId;
+      allow create: if request.auth != null && request.auth.uid == coachId;
+    }
+
+    // Students collection
+    match /students/{studentId} {
+      // Coaches can read/write their own students
+      allow read, write: if request.auth != null
+        && resource != null
+        && resource.data.coachId == request.auth.uid;
+
+      // Allow creating students if the coachId matches the auth user
+      allow create: if request.auth != null
+        && request.resource.data.coachId == request.auth.uid;
+
+      // Anyone authenticated (including anonymous) can read via shareCode query
+      allow read: if request.auth != null;
+    }
+  }
+}
